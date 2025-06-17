@@ -34,8 +34,10 @@ export default function Home() {
       <h1 className="text-2xl font-bold text-center mb-6">Playlist Comparer</h1>
       <PlaylistSelector
         accessToken={accessToken}
-        onPlaylistsSelected={(index: number, playlistId: string) => {
-          console.log(`Playlist ${index + 1} selected: ${playlistId}`);
+        onPlaylistsCompared={({ common, only1, only2 }) => {
+          console.log('Common tracks:', common);
+          console.log('Only in Playlist 1:', only1);
+          console.log('Only in Playlist 2:', only2);
         }}
       />
     </div>

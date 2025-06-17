@@ -9,20 +9,39 @@ type Playlist = {
 // Props passed into this component
 type Props = {
   accessToken: string; // Spotify access token, used to fetch private playlists
-  onPlaylistsSelected: (index: number, playlistId: string) => void; // Callback when a playlist is selected
+  onPlaylistsCompared: (result: {
+    common: NormalizedTrack[];
+    only1: NormalizedTrack[];
+    only2: NormalizedTrack[];
+  }) => void;
 };
 
-export default function PlaylistSelector({ accessToken, onPlaylistsSelected }: Props) {
-  // Keep track of whether each of the two playlists is selected as "public" or "private"
+type NormalizedTrack = {
+  id: string;
+  name: string;
+  artist: string;
+};
+
+async function fetchTracks(playlistId: string, token: string): Promise<NormalizedTrack[]> {
+  const res = await fetch(`https://api.spotify.com/v1/playlists/${playlistId}/tracks`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+
+  const data = await res.json();
+  return data.items.map((item: any) => ({
+    id: item.track.id,
+    name: item.track.name,
+    artist: item.track.artists.map((a: any) => a.name).join(', ')
+  }));
+}
+
+export default function PlaylistSelector({ accessToken, onPlaylistsCompared }: Props) {
   const [selectionMode, setSelectionMode] = useState<('public' | 'private')[]>(['public', 'public']);
-
-  // Store either the pasted URL (for public) or selected ID (for private) for each playlist
   const [playlistInputs, setPlaylistInputs] = useState(['', '']);
-
-  // Store the list of user's private playlists (fetched from Spotify)
   const [privatePlaylists, setPrivatePlaylists] = useState<Playlist[]>([]);
 
-  // Fetch user's playlists from Spotify once accessToken is available
   useEffect(() => {
     if (!accessToken) return;
 
@@ -32,84 +51,102 @@ export default function PlaylistSelector({ accessToken, onPlaylistsSelected }: P
       .then(res => res.json())
       .then(data => {
         if (data?.items) {
-          // Simplify the playlist objects: only keep id and name
           const playlists = data.items.map((p: any) => ({ id: p.id, name: p.name }));
-          setPrivatePlaylists(playlists); // Store in state
+          setPrivatePlaylists(playlists);
         }
       });
-  }, [accessToken]); // Runs again if accessToken changes
+  }, [accessToken]);
 
-  // Extract playlist ID from a public Spotify playlist URL
   const extractId = (url: string) => {
-    const match = url.match(/playlist\/([a-zA-Z0-9]+)/); // Look for `playlist/{id}` pattern
-    return match?.[1] || ''; // Return the ID, or empty string if not found
+    const match = url.match(/playlist\/([a-zA-Z0-9]+)/);
+    return match?.[1] || '';
   };
 
-  // Update the input (URL or selected ID) for a specific playlist (0 or 1)
   const handleChange = (index: number, value: string) => {
-    const copy = [...playlistInputs]; // Copy the current inputs
-    copy[index] = value; // Update the relevant one
-    setPlaylistInputs(copy); // Save to state
+    const copy = [...playlistInputs];
+    copy[index] = value;
+    setPlaylistInputs(copy);
   };
 
-  // When the user clicks "Confirm" for a playlist,
-  // determine whether to extract ID from URL or use selected private ID
-  const handleConfirm = (index: number) => {
-    const id = selectionMode[index] === 'public'
-      ? extractId(playlistInputs[index]) // extract from URL
-      : playlistInputs[index]; // use directly (for private)
+  const handleConfirmBoth = async () => {
+    const playlist1Id = selectionMode[0] === 'public'
+      ? extractId(playlistInputs[0])
+      : playlistInputs[0];
 
-    // Call the callback with the selected playlist ID
-    if (id) onPlaylistsSelected(index, id);
+    const playlist2Id = selectionMode[1] === 'public'
+      ? extractId(playlistInputs[1])
+      : playlistInputs[1];
+
+    if (!playlist1Id || !playlist2Id) return;
+
+    try {
+      const [tracks1, tracks2] = await Promise.all([
+        fetchTracks(playlist1Id, accessToken),
+        fetchTracks(playlist2Id, accessToken)
+      ]);
+
+      const ids1 = new Set(tracks1.map(t => t.id));
+      const ids2 = new Set(tracks2.map(t => t.id));
+
+      const common = tracks1.filter(t => ids2.has(t.id));
+      const only1 = tracks1.filter(t => !ids2.has(t.id));
+      const only2 = tracks2.filter(t => !ids1.has(t.id));
+
+      onPlaylistsCompared({ common, only1, only2 });
+    } catch (err) {
+      console.error("Error comparing playlists:", err);
+    }
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4">
-      {[0, 1].map((idx) => (
-        <div key={idx} className="p-4 border rounded-xl shadow space-y-2">
-          <h2 className="font-bold text-lg">Playlist {idx + 1}</h2>
-          <select
-            className="w-full p-2 border rounded"
-            value={selectionMode[idx]}
-            onChange={e => {
-              const newModes = [...selectionMode];
-              newModes[idx] = e.target.value as 'public' | 'private';
-              setSelectionMode(newModes);
-              handleChange(idx, '');
-            }}
-          >
-            <option value="public">Public (link)</option>
-            <option value="private">Private (library)</option>
-          </select>
-
-          {selectionMode[idx] === 'public' ? (
-            <input
-              className="w-full p-2 border rounded"
-              placeholder="Paste playlist link"
-              value={playlistInputs[idx]}
-              onChange={e => handleChange(idx, e.target.value)}
-            />
-          ) : (
+    <div className="p-6 bg-gray-900 rounded-xl shadow-lg">
+      <div className="space-y-6">
+        {[0, 1].map((idx) => (
+          <div key={idx} className="space-y-2">
+            <h2 className="font-bold text-lg text-white">Playlist {idx + 1}</h2>
             <select
-              className="w-full p-2 border rounded"
-              value={playlistInputs[idx]}
-              onChange={e => handleChange(idx, e.target.value)}
+              className="w-full p-2 border border-gray-600 rounded bg-gray-700 text-white"
+              value={selectionMode[idx]}
+              onChange={e => {
+                const newModes = [...selectionMode];
+                newModes[idx] = e.target.value as 'public' | 'private';
+                setSelectionMode(newModes);
+                handleChange(idx, '');
+              }}
             >
-              <option value="">Select from your library</option>
-              {privatePlaylists.map(p => (
-                <option key={p.id} value={p.id}>{p.name}</option>
-              ))}
+              <option value="public">Public (link)</option>
+              <option value="private">Private (library)</option>
             </select>
-          )}
 
-          <button
-            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded w-full"
-            onClick={() => handleConfirm(idx)}
-          >
-            Confirm
-          </button>
-        </div>
-      ))}
+            {selectionMode[idx] === 'public' ? (
+              <input
+                className="w-full p-2 border border-gray-600 rounded bg-gray-700 text-white placeholder-gray-400"
+                placeholder="Paste playlist link"
+                value={playlistInputs[idx]}
+                onChange={e => handleChange(idx, e.target.value)}
+              />
+            ) : (
+              <select
+                className="w-full p-2 border border-gray-600 rounded bg-gray-700 text-white"
+                value={playlistInputs[idx]}
+                onChange={e => handleChange(idx, e.target.value)}
+              >
+                <option value="" className="text-gray-400">Select from your library</option>
+                {privatePlaylists.map(p => (
+                  <option key={p.id} value={p.id}>{p.name}</option>
+                ))}
+              </select>
+            )}
+          </div>
+        ))}
+
+        <button
+          className="mt-6 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded w-full text-lg font-semibold"
+          onClick={handleConfirmBoth}
+        >
+          Compare Playlists
+        </button>
+      </div>
     </div>
   );
 }
