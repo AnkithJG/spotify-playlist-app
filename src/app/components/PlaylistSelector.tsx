@@ -32,11 +32,14 @@ async function fetchTracks(playlistId: string, token: string): Promise<Normalize
   });
 
   const data = await res.json();
-  return data.items.map((item: any) => ({
-    id: item.track.id,
-    name: item.track.name,
-    artist: item.track.artists.map((a: any) => a.name).join(', ')
-  }));
+  return data.items
+    .filter((item: any) => item.track !== null)
+    .map((item: any) => ({
+      id: item.track.id,
+      name: item.track.name,
+      artist: item.track.artists.map((a: any) => a.name).join(', ')
+    }));
+
 }
 
 export default function PlaylistSelector({ accessToken, onPlaylistsCompared }: Props) {
