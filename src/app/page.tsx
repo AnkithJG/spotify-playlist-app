@@ -45,3 +45,13 @@
 //     </div>
 //   );
 // }
+
+'use client';
+
+export default function Home() {
+  return (
+    <div style={{ padding: 100 }}>
+      <h1>Hello from Vercel Test!</h1>
+    </div>
+  );
+}
