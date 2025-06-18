@@ -2,11 +2,18 @@
 
 
 import { useEffect, useState } from 'react';
- import { Button } from "@/components/ui/button"
-// import { Input } from "@/components/ui/input"
-// import { Label } from "@/components/ui/label"
-// import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-//import { Card, CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Card, CardContent } from "@/components/ui/card"
 import { Music, ArrowRight, Link2, Lock, Globe, Sparkles } from "lucide-react"
 //import { VennDiagram } from "./venn-diagram"
 
@@ -109,57 +116,135 @@ export default function PlaylistSelector({ accessToken, onPlaylistsCompared }: P
     }
   };
 
-  return (
-   <div className="p-6 bg-gray-900 rounded-xl shadow-lg">
-      <div className="space-y-6">
-        {[0, 1].map((idx) => (
-          <div key={idx} className="space-y-2">
-            <h2 className="font-bold text-lg text-white">Playlist {idx + 1}</h2>
-            <select
-              className="w-full p-2 border border-gray-600 rounded bg-gray-700 text-white"
-              value={selectionMode[idx]}
-              onChange={e => {
-                const newModes = [...selectionMode];
-                newModes[idx] = e.target.value as 'public' | 'private';
-                setSelectionMode(newModes);
-                handleChange(idx, '');
-              }}
-            >
-              <option value="public">Public (link)</option>
-              <option value="private">Private (library)</option>
-            </select>
-
-
-            {selectionMode[idx] === 'public' ? (
-              <input
-                className="w-full p-2 border border-gray-600 rounded bg-gray-700 text-white placeholder-gray-400"
-                placeholder="Paste playlist link"
-                value={playlistInputs[idx]}
-                onChange={e => handleChange(idx, e.target.value)}
-              />
-            ) : (
-              <select
-                className="w-full p-2 border border-gray-600 rounded bg-gray-700 text-white"
-                value={playlistInputs[idx]}
-                onChange={e => handleChange(idx, e.target.value)}
-              >
-                <option value="" className="text-gray-400">Select from your library</option>
-                {privatePlaylists.map(p => (
-                  <option key={p.id} value={p.id}>{p.name}</option>
-                ))}
-              </select>
-            )}
+ return (
+    <div className="min-h-screen bg-gradient-to-br from-[#191414] via-[#1a1a1a] to-[#0d1117] text-white">
+      {/* Header */}
+      <div className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-[#1DB954]/20 to-transparent" />
+        <div className="relative px-6 py-12 text-center">
+          <div className="mx-auto max-w-4xl">
+            <div className="mb-6 flex justify-center">
+              <div className="relative">
+                <div className="absolute -inset-4 rounded-full bg-[#1DB954]/20 blur-xl animate-pulse" />
+                <div className="relative flex h-16 w-16 items-center justify-center rounded-full bg-[#1DB954] shadow-lg shadow-[#1DB954]/25">
+                  <Music className="h-8 w-8 text-white" />
+                </div>
+              </div>
+            </div>
+            <h1 className="mb-4 text-5xl font-bold tracking-tight">
+              Playlist <span className="text-[#1DB954]">Comparer</span>
+            </h1>
+            <p className="text-xl text-gray-300">Compare your Spotify playlists and discover the differences</p>
           </div>
-        ))}
-
-
-        <button
-          className="mt-6 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded w-full text-lg font-semibold"
-          onClick={handleConfirmBoth}
-        >
-          Compare Playlists
-        </button>
+        </div>
       </div>
-    </div>
+
+      {/* Main Content */}
+      <div className="px-6 pb-12">
+        <div className="mx-auto max-w-4xl">
+          <Card className="border-gray-800 bg-[#1a1a1a]/50 backdrop-blur-sm">
+            <CardContent className="p-8">
+              <div className="grid gap-8 lg:grid-cols-2">
+                {/* Playlist 1 */}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#1DB954]/20">
+                      <Music className="h-5 w-5 text-[#1DB954]" />
+                    </div>
+                    <div>
+                      <Label className="text-lg font-semibold text-white">First Playlist</Label>
+                      <Select
+                        value={selectionMode[0]}
+                        onValueChange={(value: 'public' | 'private') => {
+                          const newModes = [...selectionMode];
+                          newModes[0] = value;
+                          setSelectionMode(newModes);
+                          handleChange(0, '');
+                        }}
+                      >
+                        <SelectTrigger className="border-gray-700 bg-[#2a2a2a] pl-10 text-white focus:border-[#1DB954] focus:ring-[#1DB954]/20">
+                          <SelectValue placeholder="Select mode" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="public">Public (link)</SelectItem>
+                          <SelectItem value="private">Private (library)</SelectItem>
+                        </SelectContent>
+                      </Select>
+
+                      {selectionMode[0] === 'public' ? (
+                        <div className="relative">
+                          <Link2 className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                          <Input
+                            placeholder="Enter a playlist link!"
+                            value={playlistInputs[0]}
+                            onChange ={e => handleChange(0, e.target.value)}
+                            className="border-gray-700 bg-[#2a2a2a] pl-10 text-white placeholder:text-gray-500 focus:border-[#1DB954] focus:ring-[#1DB954]/20"
+                          />
+                      </div>
+                      ) : (
+                        <Select
+                          value={playlistInputs[0]}
+                          onValueChange={(value) => handleChange(0, value)}
+                        >
+                        <SelectTrigger className="border-gray-700 bg-[#2a2a2a] pl-10 text-white focus:border-[#1DB954] focus:ring-[#1DB954]/20">
+                          <SelectValue placeholder="Select from your library" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="">Select from your library</SelectItem>
+                          {privatePlaylists.map((p) => (
+                            <SelectItem key={p.id} value={p.id}>
+                              {p.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+
+                        </Select>
+                      )}
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+                {/* VS Divider */}
+                <div className="flex items-center justify-center lg:col-span-2">
+                  <div className="flex items-center gap-4">
+                    <div className="h-px w-16 bg-gradient-to-r from-transparent to-gray-600" />
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#1DB954] shadow-lg shadow-[#1DB954]/25">
+                      <span className="text-sm font-bold text-white">VS</span>
+                    </div>
+                    <div className="h-px w-16 bg-gradient-to-l from-transparent to-gray-600" />
+                  </div>
+                </div>
+
+                {/* Playlist 2 */}
+
+              {/* Compare Button
+              <div className="mt-8 flex justify-center">
+                <Button
+                  onClick={handleCompare}
+                  disabled={!playlist1 || !playlist2 || isComparing}
+                  className="group relative h-14 px-8 bg-[#1DB954] text-white font-semibold text-lg hover:bg-[#1ed760] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg shadow-[#1DB954]/25 hover:shadow-[#1DB954]/40"
+                >
+                  {isComparing ? (
+                    <div className="flex items-center gap-3">
+                      <div className="h-5 w-5 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                      <span>Comparing Playlists...</span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-3">
+                      <Sparkles className="h-5 w-5 transition-transform group-hover:scale-110" />
+                      <span>Compare Playlists</span>
+                      <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+                    </div>
+                  )}
+                </Button>
+              </div> */}
+            </CardContent>
+          </Card>
+
+
+        </div>
+        </div>
+      </div>
   )
 }
