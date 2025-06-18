@@ -1,16 +1,21 @@
+'use client';
+
 import { useEffect, useState } from 'react';
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Card, CardContent } from "@/components/ui/card"
+import { Music, ArrowRight, Link2, Lock, Globe, Sparkles } from "lucide-react"
+//import { VennDiagram } from "./venn-diagram"
 
-//testing
-
-// Define the shape of a simplified playlist object
 type Playlist = {
   id: string;
   name: string;
 };
 
-// Props passed into this component
 type Props = {
-  accessToken: string; // Spotify access token, used to fetch private playlists
+  accessToken: string; 
   onPlaylistsCompared: (result: {
     common: NormalizedTrack[];
     only1: NormalizedTrack[];
@@ -104,7 +109,7 @@ export default function PlaylistSelector({ accessToken, onPlaylistsCompared }: P
   };
 
   return (
-    <div className="p-6 bg-gray-900 rounded-xl shadow-lg">
+   <div className="p-6 bg-gray-900 rounded-xl shadow-lg">
       <div className="space-y-6">
         {[0, 1].map((idx) => (
           <div key={idx} className="space-y-2">
@@ -122,6 +127,7 @@ export default function PlaylistSelector({ accessToken, onPlaylistsCompared }: P
               <option value="public">Public (link)</option>
               <option value="private">Private (library)</option>
             </select>
+
 
             {selectionMode[idx] === 'public' ? (
               <input
@@ -145,6 +151,7 @@ export default function PlaylistSelector({ accessToken, onPlaylistsCompared }: P
           </div>
         ))}
 
+
         <button
           className="mt-6 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded w-full text-lg font-semibold"
           onClick={handleConfirmBoth}
@@ -153,5 +160,5 @@ export default function PlaylistSelector({ accessToken, onPlaylistsCompared }: P
         </button>
       </div>
     </div>
-  );
+  )
 }

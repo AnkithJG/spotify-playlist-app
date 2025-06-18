@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import PlaylistSelector from './components/PlaylistSelector'; 
+import PlaylistSelector from './modules/PlaylistSelector'; 
 
 export default function Home() {
   const [accessToken, setAccessToken] = useState<string | null>(null);
