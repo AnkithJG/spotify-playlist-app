@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic';
 
 
 import { useEffect, useState } from 'react';
-import PlaylistSelector from './modules/PlaylistSelector'; 
+import PlaylistSelector from './modules/PlaylistSelectortmp'; 
 
 export default function Home() {
   const [accessToken, setAccessToken] = useState<string | null>(null);
@@ -34,17 +34,13 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gray-100 p-4">
       <h1 className="text-2xl font-bold text-center mb-6">Playlist Comparer</h1>
-      {/* <PlaylistSelector
+      <PlaylistSelector
         accessToken={accessToken}
         onPlaylistsCompared={({ common, only1, only2 }) => {
           console.log('Common tracks:', common);
           console.log('Only in Playlist 1:', only1);
           console.log('Only in Playlist 2:', only2);
         }}
-      /> */}
-      <PlaylistSelector
-        accessToken="fake-token"
-        onPlaylistsCompared={(result) => console.log('Comparison', result)}
       />
     </div>
   );
