@@ -250,8 +250,6 @@
 // }
 
 
-'use client';
-
 type Props = {
   accessToken: string;
   onPlaylistsCompared: (result: any) => void;
