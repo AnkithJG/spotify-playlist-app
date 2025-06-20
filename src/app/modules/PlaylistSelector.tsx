@@ -183,13 +183,6 @@ export default function PlaylistSelector({ accessToken, onPlaylistsCompared }: P
                 <div className="space-y-4">
                   <div className="flex items-center gap-3">
                     {/* Playlist 1 Cover */}
-                    {playlistImages[0] && (
-                      <img
-                        src={playlistImages[0]}
-                        alt="Playlist 1 Cover"
-                        className="h-16 w-16 rounded shadow-lg object-cover"
-                      />
-                    )}
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#1DB954]/20">
                       <Music className="h-5 w-5 text-[#1DB954]" />
                     </div>
@@ -244,6 +237,13 @@ export default function PlaylistSelector({ accessToken, onPlaylistsCompared }: P
                           </SelectContent>
                         </Select>
                       )}
+                      {playlistImages[0] && (
+                      <img
+                        src={playlistImages[0]}
+                        alt="Playlist 1 Cover"
+                        className="h-16 w-16 rounded shadow-lg object-cover"
+                      />
+                    )}
                     </div>
                   </div>
                 </div>
