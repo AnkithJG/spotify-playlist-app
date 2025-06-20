@@ -32,7 +32,6 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4">
       <PlaylistSelector
         accessToken={accessToken}
         onPlaylistsCompared={({ common, only1, only2 }) => {
@@ -41,7 +40,6 @@ export default function Home() {
           console.log('Only in Playlist 2:', only2);
         }}
       />
-    </div>
   );
 }
 
