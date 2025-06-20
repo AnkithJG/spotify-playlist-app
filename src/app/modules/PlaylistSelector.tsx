@@ -181,6 +181,10 @@ export default function PlaylistSelector({ accessToken, onPlaylistsCompared }: P
               <div className="grid gap-8 lg:grid-cols-2">
                 {/* Playlist 1 */}
                 <div className="flex flex-row items-start gap-6">
+                  {/* Music Icon */}
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#1DB954]/20 mt-2">
+                    <Music className="h-5 w-5 text-[#1DB954]" />
+                  </div>
                   {/* Controls (stacked vertically) */}
                   <div className="flex-1 space-y-4">
                     <Label className="text-lg font-semibold text-white">First Playlist</Label>
@@ -206,7 +210,7 @@ export default function PlaylistSelector({ accessToken, onPlaylistsCompared }: P
                       <div className="relative">
                         <Link2 className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
                         <Input
-                          placeholder="Enter a playlist link!"
+                          placeholder="https://open.spotify.com/playlist/0lGOtAgmZ9nYd8dUWARwU2"
                           value={playlistInputs[0]}
                           onChange={e => handleChange(0, e.target.value)}
                           className="border-gray-700 bg-[#2a2a2a] pl-10 text-white placeholder:text-gray-500 focus:border-[#1DB954] focus:ring-[#1DB954]/20"
@@ -255,6 +259,10 @@ export default function PlaylistSelector({ accessToken, onPlaylistsCompared }: P
                 </div>
                 {/* Playlist 2 */}
                 <div className="flex flex-row items-start gap-6">
+                  {/* Music Icon */}
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#1DB954]/20 mt-2">
+                    <Music className="h-5 w-5 text-[#1DB954]" />
+                  </div>
                   {/* Controls (stacked vertically) */}
                   <div className="flex-1 space-y-4">
                     <Label className="text-lg font-semibold text-white">Second Playlist</Label>
@@ -280,7 +288,7 @@ export default function PlaylistSelector({ accessToken, onPlaylistsCompared }: P
                       <div className="relative">
                         <Link2 className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
                         <Input
-                          placeholder="Enter a playlist link!"
+                          placeholder="https://open.spotify.com/playlist/0lGOtAgmZ9nYd8dUWARwU2"
                           value={playlistInputs[1]}
                           onChange={e => handleChange(1, e.target.value)}
                           className="border-gray-700 bg-[#2a2a2a] pl-10 text-white placeholder:text-gray-500 focus:border-[#1DB954] focus:ring-[#1DB954]/20"
