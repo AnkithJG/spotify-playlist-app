@@ -57,7 +57,7 @@ async function fetchTracks(playlistId: string, token: string): Promise<Normalize
 }
 
 async function fetchPlaylistCover(playlistId: string, token: string): Promise<string | null> {
-  const res = await fetch(`https://api.spotify.com/v1/playlists/${playlistId}/tracks`, {
+  const res = await fetch(`https://api.spotify.com/v1/playlists/${playlistId}`, {
     headers: {
       Authorization: `Bearer ${token}`
     }
@@ -65,16 +65,15 @@ async function fetchPlaylistCover(playlistId: string, token: string): Promise<st
 
   if (!res.ok) return null;
 
-  const images = await res.json();
-  return images[0]?.url || null;
-
+  const data = await res.json();
+  return data.images?.[0]?.url || null;
 }
 
 export default function PlaylistSelector({ accessToken, onPlaylistsCompared }: Props) {
   const [selectionMode, setSelectionMode] = useState<('public' | 'private')[]>(['public', 'public']);
   const [playlistInputs, setPlaylistInputs] = useState(['', '']);
   const [privatePlaylists, setPrivatePlaylists] = useState<Playlist[]>([]);
-  const [playlistImages, setPlaylistImages] = useState<(string | null)[]>(['', '']);
+  const [playlistImages, setPlaylistImages] = useState<(string | null)[]>([null, null]);
 
   useEffect(() => {
     if (!accessToken) return;
@@ -101,6 +100,25 @@ export default function PlaylistSelector({ accessToken, onPlaylistsCompared }: P
     copy[index] = value;
     setPlaylistInputs(copy);
   };
+
+  // Fetch cover images when playlistInputs or selectionMode changes
+  useEffect(() => {
+    const fetchImages = async () => {
+      const newImages = await Promise.all([0, 1].map(async (idx) => {
+        const input = playlistInputs[idx];
+        if (!input) return null;
+        const id = selectionMode[idx] === 'public' ? extractId(input) : input;
+        if (!id) return null;
+        try {
+          return await fetchPlaylistCover(id, accessToken);
+        } catch {
+          return null;
+        }
+      }));
+      setPlaylistImages(newImages);
+    };
+    fetchImages();
+  }, [playlistInputs, selectionMode, accessToken]);
 
   const handleConfirmBoth = async () => {
     const playlist1Id = selectionMode[0] === 'public'
@@ -164,6 +182,14 @@ export default function PlaylistSelector({ accessToken, onPlaylistsCompared }: P
                 {/* Playlist 1 */}
                 <div className="space-y-4">
                   <div className="flex items-center gap-3">
+                    {/* Playlist 1 Cover */}
+                    {playlistImages[0] && (
+                      <img
+                        src={playlistImages[0]}
+                        alt="Playlist 1 Cover"
+                        className="h-16 w-16 rounded shadow-lg object-cover"
+                      />
+                    )}
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#1DB954]/20">
                       <Music className="h-5 w-5 text-[#1DB954]" />
                     </div>
@@ -196,27 +222,26 @@ export default function PlaylistSelector({ accessToken, onPlaylistsCompared }: P
                             onChange ={e => handleChange(0, e.target.value)}
                             className="border-gray-700 bg-[#2a2a2a] pl-10 text-white placeholder:text-gray-500 focus:border-[#1DB954] focus:ring-[#1DB954]/20"
                           />
-                      </div>
+                        </div>
                       ) : (
                         <Select
                           value={playlistInputs[0]}
                           onValueChange={(value) => handleChange(0, value)}
                         >
-                        <SelectTrigger className="border-gray-700 bg-[#2a2a2a] text-white focus:border-[#1DB954] focus:ring-[#1DB954]/20">
-                          <SelectValue placeholder="Select from your library" />
-                        </SelectTrigger>
-                        <SelectContent 
-                          side="bottom" 
-                          className="max-h-48 overflow-y-auto border-gray-700 bg-[#2a2a2a] text-white [&_[data-highlighted]]:bg-[#3a3a3a] [&_[data-highlighted]]:text-white"
-                        >
-                          <SelectItem value="placeholder" disabled>Select from your library</SelectItem>
-                          {privatePlaylists.map((p) => (
-                            <SelectItem key={p.id} value={p.id} >
-                              {p.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-
+                          <SelectTrigger className="border-gray-700 bg-[#2a2a2a] text-white focus:border-[#1DB954] focus:ring-[#1DB954]/20">
+                            <SelectValue placeholder="Select from your library" />
+                          </SelectTrigger>
+                          <SelectContent 
+                            side="bottom" 
+                            className="max-h-48 overflow-y-auto border-gray-700 bg-[#2a2a2a] text-white [&_[data-highlighted]]:bg-[#3a3a3a] [&_[data-highlighted]]:text-white"
+                          >
+                            <SelectItem value="placeholder" disabled>Select from your library</SelectItem>
+                            {privatePlaylists.map((p) => (
+                              <SelectItem key={p.id} value={p.id} >
+                                {p.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
                         </Select>
                       )}
                     </div>
@@ -235,6 +260,14 @@ export default function PlaylistSelector({ accessToken, onPlaylistsCompared }: P
                 {/* Playlist 2 */}
                 <div className="space-y-4">
                   <div className="flex items-center gap-3">
+                    {/* Playlist 2 Cover */}
+                    {playlistImages[1] && (
+                      <img
+                        src={playlistImages[1]}
+                        alt="Playlist 2 Cover"
+                        className="h-16 w-16 rounded shadow-lg object-cover"
+                      />
+                    )}
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#1DB954]/20">
                       <Music className="h-5 w-5 text-[#1DB954]" />
                     </div>
@@ -267,58 +300,53 @@ export default function PlaylistSelector({ accessToken, onPlaylistsCompared }: P
                             onChange ={e => handleChange(1, e.target.value)}
                             className="border-gray-700 bg-[#2a2a2a] pl-10 text-white placeholder:text-gray-500 focus:border-[#1DB954] focus:ring-[#1DB954]/20"
                           />
-                      </div>
+                        </div>
                       ) : (
                         <Select
                           value={playlistInputs[1]}
                           onValueChange={(value) => handleChange(1, value)}
                         >
-                        <SelectTrigger className="border-gray-700 bg-[#2a2a2a] text-white focus:border-[#1DB954] focus:ring-[#1DB954]/20">
-                          <SelectValue placeholder="Select from your library" />
-                        </SelectTrigger>
-                        <SelectContent 
-                          side="bottom" 
-                          className="max-h-48 overflow-y-auto border-gray-700 bg-[#2a2a2a] text-white [&_[data-highlighted]]:bg-[#3a3a3a] [&_[data-highlighted]]:text-white"
-                        >
-                          <SelectItem value="placeholder" disabled>Select from your library</SelectItem>
-                          {privatePlaylists.map((p) => (
-                            <SelectItem key={p.id} value={p.id}>
-                              {p.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-
+                          <SelectTrigger className="border-gray-700 bg-[#2a2a2a] text-white focus:border-[#1DB954] focus:ring-[#1DB954]/20">
+                            <SelectValue placeholder="Select from your library" />
+                          </SelectTrigger>
+                          <SelectContent 
+                            side="bottom" 
+                            className="max-h-48 overflow-y-auto border-gray-700 bg-[#2a2a2a] text-white [&_[data-highlighted]]:bg-[#3a3a3a] [&_[data-highlighted]]:text-white"
+                          >
+                            <SelectItem value="placeholder" disabled>Select from your library</SelectItem>
+                            {privatePlaylists.map((p) => (
+                              <SelectItem key={p.id} value={p.id}>
+                                {p.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
                         </Select>
                       )}
                     </div>
                   </div>
                 </div>
               </div>
-                {/* Compare Button
-                <div className="mt-8 flex justify-center">
-                  <Button
-                    onClick={handleCompare}
-                    disabled={!playlist1 || !playlist2 || isComparing}
-                    className="group relative h-14 px-8 bg-[#1DB954] text-white font-semibold text-lg hover:bg-[#1ed760] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg shadow-[#1DB954]/25 hover:shadow-[#1DB954]/40"
-                  >
-                    {isComparing ? (
-                      <div className="flex items-center gap-3">
-                        <div className="h-5 w-5 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-                        <span>Comparing Playlists...</span>
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-3">
-                        <Sparkles className="h-5 w-5 transition-transform group-hover:scale-110" />
-                        <span>Compare Playlists</span>
-                        <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-                      </div>
-                    )}
-                  </Button>
-                </div> */}
+              {/* Compare Button
+              <div className="mt-8 flex justify-center">
+                <Button
+                  onClick={handleConfirmBoth}
+                  disabled={
+                    !(
+                      (selectionMode[0] === 'public' ? extractId(playlistInputs[0]) : playlistInputs[0]) &&
+                      (selectionMode[1] === 'public' ? extractId(playlistInputs[1]) : playlistInputs[1])
+                    )
+                  }
+                  className="group relative h-14 px-8 bg-[#1DB954] text-white font-semibold text-lg hover:bg-[#1ed760] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg shadow-[#1DB954]/25 hover:shadow-[#1DB954]/40"
+                >
+                  <div className="flex items-center gap-3">
+                    <Sparkles className="h-5 w-5 transition-transform group-hover:scale-110" />
+                    <span>Compare Playlists</span>
+                    <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+                  </div>
+                </Button>
+              </div> */}
             </CardContent>
           </Card>
-
-
         </div>
         </div>
       </div>
