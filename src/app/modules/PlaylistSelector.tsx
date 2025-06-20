@@ -56,10 +56,25 @@ async function fetchTracks(playlistId: string, token: string): Promise<Normalize
 
 }
 
+async function fetchPlaylistCover(playlistId: string, token: string): Promise<string | null> {
+  const res = await fetch(`https://api.spotify.com/v1/playlists/${playlistId}/tracks`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+
+  if (!res.ok) return null;
+
+  const images = await res.json();
+  return images[0]?.url || null;
+
+}
+
 export default function PlaylistSelector({ accessToken, onPlaylistsCompared }: Props) {
   const [selectionMode, setSelectionMode] = useState<('public' | 'private')[]>(['public', 'public']);
   const [playlistInputs, setPlaylistInputs] = useState(['', '']);
   const [privatePlaylists, setPrivatePlaylists] = useState<Playlist[]>([]);
+  const [playlistImages, setPlaylistImages] = useState<(string | null)[]>(['', '']);
 
   useEffect(() => {
     if (!accessToken) return;
@@ -244,18 +259,15 @@ export default function PlaylistSelector({ accessToken, onPlaylistsCompared }: P
                       </Select>
 
                       {selectionMode[1] === 'public' ? (
-                        <div className="relative inline-block max-w-[400px] w-full">
-                          <Link2 className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 pointer-events-none" />
-                          
-                          <input
+                        <div className="relative">
+                          <Link2 className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                          <Input
                             placeholder="Enter a playlist link!"
                             value={playlistInputs[1]}
-                            onChange={e => handleChange(1, e.target.value)}
-                            className="border-gray-700 bg-[#2a2a2a] pl-10 pr-3 text-white placeholder:text-gray-500 focus:border-[#1DB954] focus:ring-[#1DB954]/20
-                                      w-auto min-w-[200px] max-w-full"
-                            style={{ width: 'auto' }}
+                            onChange ={e => handleChange(1, e.target.value)}
+                            className="border-gray-700 bg-[#2a2a2a] pl-10 text-white placeholder:text-gray-500 focus:border-[#1DB954] focus:ring-[#1DB954]/20"
                           />
-                        </div>
+                      </div>
                       ) : (
                         <Select
                           value={playlistInputs[1]}
