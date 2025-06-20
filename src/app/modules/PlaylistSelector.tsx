@@ -1,7 +1,5 @@
 'use client';
 
-//force
-//testing 
 import { useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -16,7 +14,6 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Card, CardContent } from "@/components/ui/card"
 import { Music, ArrowRight, Link2, Lock, Globe, Sparkles } from "lucide-react"
-//import { VennDiagram } from "./venn-diagram"
 
 type Playlist = {
   id: string;
@@ -53,7 +50,6 @@ async function fetchTracks(playlistId: string, token: string): Promise<Normalize
       name: item.track.name,
       artist: item.track.artists.map((a: any) => a.name).join(', ')
     }));
-
 }
 
 async function fetchPlaylistCover(playlistId: string, token: string): Promise<string | null> {
@@ -101,7 +97,6 @@ export default function PlaylistSelector({ accessToken, onPlaylistsCompared }: P
     setPlaylistInputs(copy);
   };
 
-  // Fetch cover images when playlistInputs or selectionMode changes
   useEffect(() => {
     const fetchImages = async () => {
       const newImages = await Promise.all([0, 1].map(async (idx) => {
@@ -150,7 +145,7 @@ export default function PlaylistSelector({ accessToken, onPlaylistsCompared }: P
     }
   };
 
- return (
+  return (
     <div className="min-h-screen bg-gradient-to-br from-[#191414] via-[#1a1a1a] to-[#0d1117] text-white">
       {/* Header */}
       <div className="relative overflow-hidden">
@@ -166,7 +161,7 @@ export default function PlaylistSelector({ accessToken, onPlaylistsCompared }: P
               </div>
             </div>
             <h1 className="mb-4 text-5xl font-bold tracking-tight">
-              Playlist <span className="text-[#1DB954]">Comparer</span>
+              Spotify Playlist <span className="text-[#1DB954]">Comparer</span>
             </h1>
             <p className="text-xl text-gray-300">Compare your Spotify playlists and discover the differences</p>
           </div>
@@ -180,7 +175,7 @@ export default function PlaylistSelector({ accessToken, onPlaylistsCompared }: P
             <CardContent className="p-8">
               <div className="grid gap-8 lg:grid-cols-2">
                 {/* Playlist 1 */}
-                <div className="flex flex-row items-start w-full">
+                <div className="flex flex-row items-start w-full relative">
                   {/* Music Icon */}
                   <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#1DB954]/20 mt-2 mr-4">
                     <Music className="h-5 w-5 text-[#1DB954]" />
@@ -240,12 +235,13 @@ export default function PlaylistSelector({ accessToken, onPlaylistsCompared }: P
                   </div>
                   {/* Big Cover Image */}
                   {playlistImages[0] && (
-                    <img
-                      src={playlistImages[0]}
-                      alt="Playlist 1 Cover"
-                      className="h-48 w-48 rounded shadow-lg object-cover ml-auto pr-4"
-                      style={{ marginLeft: "auto", paddingRight: "1rem" }}
-                    />
+                    <div className="absolute right-0 top-0">
+                      <img
+                        src={playlistImages[0]}
+                        alt="Playlist 1 Cover"
+                        className="h-48 w-48 rounded shadow-lg object-cover"
+                      />
+                    </div>
                   )}
                 </div>
                 {/* VS Divider */}
@@ -259,7 +255,7 @@ export default function PlaylistSelector({ accessToken, onPlaylistsCompared }: P
                   </div>
                 </div>
                 {/* Playlist 2 */}
-                <div className="flex flex-row items-start w-full">
+                <div className="flex flex-row items-start w-full relative">
                   {/* Music Icon */}
                   <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#1DB954]/20 mt-2 mr-4">
                     <Music className="h-5 w-5 text-[#1DB954]" />
@@ -319,17 +315,18 @@ export default function PlaylistSelector({ accessToken, onPlaylistsCompared }: P
                   </div>
                   {/* Big Cover Image */}
                   {playlistImages[1] && (
-                    <img
-                      src={playlistImages[1]}
-                      alt="Playlist 2 Cover"
-                      className="h-48 w-48 rounded shadow-lg object-cover ml-auto pr-4"
-                      style={{ marginLeft: "auto", paddingRight: "1rem" }}
-                    />
+                    <div className="absolute right-0 top-0">
+                      <img
+                        src={playlistImages[1]}
+                        alt="Playlist 2 Cover"
+                        className="h-48 w-48 rounded shadow-lg object-cover"
+                      />
+                    </div>
                   )}
                 </div>
               </div>
-              {/* Compare Button
-              <div className="mt-8 flex justify-center">
+              {/* Compare Button */}
+              {/* <div className="mt-8 flex justify-center">
                 <Button
                   onClick={handleConfirmBoth}
                   disabled={
@@ -350,7 +347,7 @@ export default function PlaylistSelector({ accessToken, onPlaylistsCompared }: P
             </CardContent>
           </Card>
         </div>
-        </div>
       </div>
+    </div>
   )
 }
