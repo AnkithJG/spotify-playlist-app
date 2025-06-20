@@ -244,15 +244,18 @@ export default function PlaylistSelector({ accessToken, onPlaylistsCompared }: P
                       </Select>
 
                       {selectionMode[1] === 'public' ? (
-                        <div className="relative">
-                          <Link2 className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-                          <Input
+                        <div className="relative inline-block max-w-[400px] w-full">
+                          <Link2 className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                          
+                          <input
                             placeholder="Enter a playlist link!"
                             value={playlistInputs[1]}
-                            onChange ={e => handleChange(1, e.target.value)}
-                            className="border-gray-700 bg-[#2a2a2a] pl-10 text-white placeholder:text-gray-500 focus:border-[#1DB954] focus:ring-[#1DB954]/20"
+                            onChange={e => handleChange(1, e.target.value)}
+                            className="border-gray-700 bg-[#2a2a2a] pl-10 pr-3 text-white placeholder:text-gray-500 focus:border-[#1DB954] focus:ring-[#1DB954]/20
+                                      w-auto min-w-[200px] max-w-full"
+                            style={{ width: 'auto' }}
                           />
-                      </div>
+                        </div>
                       ) : (
                         <Select
                           value={playlistInputs[1]}
