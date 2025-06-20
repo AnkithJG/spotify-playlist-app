@@ -166,7 +166,7 @@ export default function PlaylistSelector({ accessToken, onPlaylistsCompared }: P
                         <SelectTrigger className="border-gray-700 bg-[#2a2a2a] text-white focus:border-[#1DB954] focus:ring-[#1DB954]/20">
                           <SelectValue placeholder="Select mode" />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="border-gray-700 bg-[#2a2a2a] text-white focus:border-[#1DB954] focus:ring-[#1DB954]/20">
                           <SelectItem value="public">Public (link)</SelectItem>
                           <SelectItem value="private">Private (library)</SelectItem>
                         </SelectContent>
@@ -193,7 +193,7 @@ export default function PlaylistSelector({ accessToken, onPlaylistsCompared }: P
                         <SelectContent side="bottom">
                           <SelectItem value="placeholder" disabled>Select from your library</SelectItem>
                           {privatePlaylists.map((p) => (
-                            <SelectItem key={p.id} value={p.id}>
+                            <SelectItem key={p.id} value={p.id} >
                               {p.name}
                             </SelectItem>
                           ))}
