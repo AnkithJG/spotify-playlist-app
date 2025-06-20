@@ -1,11 +1,10 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
-  experimental: {
-    serverActions: {
-      allowedOrigins: ['127.0.0.1:3000', 'localhost:3000']
-    }
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  output: 'export',
+  trailingSlash: true,
+  images: {
+    unoptimized: true
   }
-};
+}
 
-export default nextConfig;
+module.exports = nextConfig
