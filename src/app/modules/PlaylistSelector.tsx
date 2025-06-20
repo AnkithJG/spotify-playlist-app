@@ -235,7 +235,7 @@ export default function PlaylistSelector({ accessToken, onPlaylistsCompared }: P
                   </div>
                   {/* Big Cover Image */}
                   {playlistImages[0] && (
-                    <div className="absolute right-0 top-0">
+                    <div className="absolute right-[-2rem] top-0">
                       <img
                         src={playlistImages[0]}
                         alt="Playlist 1 Cover"
