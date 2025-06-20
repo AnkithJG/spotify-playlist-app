@@ -180,13 +180,13 @@ export default function PlaylistSelector({ accessToken, onPlaylistsCompared }: P
             <CardContent className="p-8">
               <div className="grid gap-8 lg:grid-cols-2">
                 {/* Playlist 1 */}
-                <div className="flex flex-row items-start gap-6">
+                <div className="flex flex-row items-start w-full">
                   {/* Music Icon */}
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#1DB954]/20 mt-2">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#1DB954]/20 mt-2 mr-4">
                     <Music className="h-5 w-5 text-[#1DB954]" />
                   </div>
                   {/* Controls (stacked vertically) */}
-                  <div className="flex-1 space-y-4">
+                  <div className="flex-1 space-y-2">
                     <Label className="text-lg font-semibold text-white">First Playlist</Label>
                     <Select
                       value={selectionMode[0]}
@@ -243,7 +243,8 @@ export default function PlaylistSelector({ accessToken, onPlaylistsCompared }: P
                     <img
                       src={playlistImages[0]}
                       alt="Playlist 1 Cover"
-                      className="h-48 w-48 rounded shadow-lg object-cover ml-auto"
+                      className="h-48 w-48 rounded shadow-lg object-cover ml-auto pr-4"
+                      style={{ marginLeft: "auto", paddingRight: "1rem" }}
                     />
                   )}
                 </div>
@@ -258,13 +259,13 @@ export default function PlaylistSelector({ accessToken, onPlaylistsCompared }: P
                   </div>
                 </div>
                 {/* Playlist 2 */}
-                <div className="flex flex-row items-start gap-6">
+                <div className="flex flex-row items-start w-full">
                   {/* Music Icon */}
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#1DB954]/20 mt-2">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#1DB954]/20 mt-2 mr-4">
                     <Music className="h-5 w-5 text-[#1DB954]" />
                   </div>
                   {/* Controls (stacked vertically) */}
-                  <div className="flex-1 space-y-4">
+                  <div className="flex-1 space-y-2">
                     <Label className="text-lg font-semibold text-white">Second Playlist</Label>
                     <Select
                       value={selectionMode[1]}
@@ -321,7 +322,8 @@ export default function PlaylistSelector({ accessToken, onPlaylistsCompared }: P
                     <img
                       src={playlistImages[1]}
                       alt="Playlist 2 Cover"
-                      className="h-48 w-48 rounded shadow-lg object-cover ml-auto"
+                      className="h-48 w-48 rounded shadow-lg object-cover ml-auto pr-4"
+                      style={{ marginLeft: "auto", paddingRight: "1rem" }}
                     />
                   )}
                 </div>
