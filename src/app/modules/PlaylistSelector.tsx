@@ -180,72 +180,68 @@ export default function PlaylistSelector({ accessToken, onPlaylistsCompared }: P
             <CardContent className="p-8">
               <div className="grid gap-8 lg:grid-cols-2">
                 {/* Playlist 1 */}
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    {/* Playlist 1 Cover */}
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#1DB954]/20">
-                      <Music className="h-5 w-5 text-[#1DB954]" />
-                    </div>
-                    <div>
-                      <Label className="text-lg font-semibold text-white">First Playlist</Label>
+                <div className="flex flex-row items-start gap-6">
+                  {/* Controls (stacked vertically) */}
+                  <div className="flex-1 space-y-4">
+                    <Label className="text-lg font-semibold text-white">First Playlist</Label>
+                    <Select
+                      value={selectionMode[0]}
+                      onValueChange={(value: 'public' | 'private') => {
+                        const newModes = [...selectionMode];
+                        newModes[0] = value;
+                        setSelectionMode(newModes);
+                        handleChange(0, '');
+                      }}
+                    >
+                      <SelectTrigger className="border-gray-700 bg-[#2a2a2a] text-white focus:border-[#1DB954] focus:ring-[#1DB954]/20">
+                        <SelectValue placeholder="Select mode" />
+                      </SelectTrigger>
+                      <SelectContent className="border-gray-700 bg-[#2a2a2a] text-white [&_[data-highlighted]]:bg-[#3a3a3a] [&_[data-highlighted]]:text-white">
+                        <SelectItem value="public">Public (link)</SelectItem>
+                        <SelectItem value="private">Private (library)</SelectItem>
+                      </SelectContent>
+                    </Select>
+
+                    {selectionMode[0] === 'public' ? (
+                      <div className="relative">
+                        <Link2 className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                        <Input
+                          placeholder="Enter a playlist link!"
+                          value={playlistInputs[0]}
+                          onChange={e => handleChange(0, e.target.value)}
+                          className="border-gray-700 bg-[#2a2a2a] pl-10 text-white placeholder:text-gray-500 focus:border-[#1DB954] focus:ring-[#1DB954]/20"
+                        />
+                      </div>
+                    ) : (
                       <Select
-                        value={selectionMode[0]}
-                        onValueChange={(value: 'public' | 'private') => {
-                          const newModes = [...selectionMode];
-                          newModes[0] = value;
-                          setSelectionMode(newModes);
-                          handleChange(0, '');
-                        }}
+                        value={playlistInputs[0]}
+                        onValueChange={(value) => handleChange(0, value)}
                       >
                         <SelectTrigger className="border-gray-700 bg-[#2a2a2a] text-white focus:border-[#1DB954] focus:ring-[#1DB954]/20">
-                          <SelectValue placeholder="Select mode" />
+                          <SelectValue placeholder="Select from your library" />
                         </SelectTrigger>
-                        <SelectContent className="border-gray-700 bg-[#2a2a2a] text-white [&_[data-highlighted]]:bg-[#3a3a3a] [&_[data-highlighted]]:text-white">
-                          <SelectItem value="public">Public (link)</SelectItem>
-                          <SelectItem value="private">Private (library)</SelectItem>
+                        <SelectContent 
+                          side="bottom" 
+                          className="max-h-48 overflow-y-auto border-gray-700 bg-[#2a2a2a] text-white [&_[data-highlighted]]:bg-[#3a3a3a] [&_[data-highlighted]]:text-white"
+                        >
+                          <SelectItem value="placeholder" disabled>Select from your library</SelectItem>
+                          {privatePlaylists.map((p) => (
+                            <SelectItem key={p.id} value={p.id} >
+                              {p.name}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
-
-                      {selectionMode[0] === 'public' ? (
-                        <div className="relative">
-                          <Link2 className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-                          <Input
-                            placeholder="Enter a playlist link!"
-                            value={playlistInputs[0]}
-                            onChange ={e => handleChange(0, e.target.value)}
-                            className="border-gray-700 bg-[#2a2a2a] pl-10 text-white placeholder:text-gray-500 focus:border-[#1DB954] focus:ring-[#1DB954]/20"
-                          />
-                        </div>
-                      ) : (
-                        <Select
-                          value={playlistInputs[0]}
-                          onValueChange={(value) => handleChange(0, value)}
-                        >
-                          <SelectTrigger className="border-gray-700 bg-[#2a2a2a] text-white focus:border-[#1DB954] focus:ring-[#1DB954]/20">
-                            <SelectValue placeholder="Select from your library" />
-                          </SelectTrigger>
-                          <SelectContent 
-                            side="bottom" 
-                            className="max-h-48 overflow-y-auto border-gray-700 bg-[#2a2a2a] text-white [&_[data-highlighted]]:bg-[#3a3a3a] [&_[data-highlighted]]:text-white"
-                          >
-                            <SelectItem value="placeholder" disabled>Select from your library</SelectItem>
-                            {privatePlaylists.map((p) => (
-                              <SelectItem key={p.id} value={p.id} >
-                                {p.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      )}
-                      {playlistImages[0] && (
-                      <img
-                        src={playlistImages[0]}
-                        alt="Playlist 1 Cover"
-                        className="h-16 w-16 rounded shadow-lg object-cover"
-                      />
                     )}
-                    </div>
                   </div>
+                  {/* Big Cover Image */}
+                  {playlistImages[0] && (
+                    <img
+                      src={playlistImages[0]}
+                      alt="Playlist 1 Cover"
+                      className="h-48 w-48 rounded shadow-lg object-cover ml-auto"
+                    />
+                  )}
                 </div>
                 {/* VS Divider */}
                 <div className="flex items-center justify-center lg:col-span-2">
@@ -258,72 +254,68 @@ export default function PlaylistSelector({ accessToken, onPlaylistsCompared }: P
                   </div>
                 </div>
                 {/* Playlist 2 */}
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    {/* Playlist 2 Cover */}
-                    {playlistImages[1] && (
-                      <img
-                        src={playlistImages[1]}
-                        alt="Playlist 2 Cover"
-                        className="h-16 w-16 rounded shadow-lg object-cover"
-                      />
-                    )}
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#1DB954]/20">
-                      <Music className="h-5 w-5 text-[#1DB954]" />
-                    </div>
-                    <div>
-                      <Label className="text-lg font-semibold text-white">Second Playlist</Label>
+                <div className="flex flex-row items-start gap-6">
+                  {/* Controls (stacked vertically) */}
+                  <div className="flex-1 space-y-4">
+                    <Label className="text-lg font-semibold text-white">Second Playlist</Label>
+                    <Select
+                      value={selectionMode[1]}
+                      onValueChange={(value: 'public' | 'private') => {
+                        const newModes = [...selectionMode];
+                        newModes[1] = value;
+                        setSelectionMode(newModes);
+                        handleChange(1, '');
+                      }}
+                    >
+                      <SelectTrigger className="border-gray-700 bg-[#2a2a2a] text-white focus:border-[#1DB954] focus:ring-[#1DB954]/20">
+                        <SelectValue placeholder="Select mode" />
+                      </SelectTrigger>
+                      <SelectContent className="border-gray-700 bg-[#2a2a2a] text-white [&_[data-highlighted]]:bg-[#3a3a3a] [&_[data-highlighted]]:text-white">
+                        <SelectItem value="public">Public (link)</SelectItem>
+                        <SelectItem value="private">Private (library)</SelectItem>
+                      </SelectContent>
+                    </Select>
+
+                    {selectionMode[1] === 'public' ? (
+                      <div className="relative">
+                        <Link2 className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                        <Input
+                          placeholder="Enter a playlist link!"
+                          value={playlistInputs[1]}
+                          onChange={e => handleChange(1, e.target.value)}
+                          className="border-gray-700 bg-[#2a2a2a] pl-10 text-white placeholder:text-gray-500 focus:border-[#1DB954] focus:ring-[#1DB954]/20"
+                        />
+                      </div>
+                    ) : (
                       <Select
-                        value={selectionMode[1]}
-                        onValueChange={(value: 'public' | 'private') => {
-                          const newModes = [...selectionMode];
-                          newModes[1] = value;
-                          setSelectionMode(newModes);
-                          handleChange(1, '');
-                        }}
+                        value={playlistInputs[1]}
+                        onValueChange={(value) => handleChange(1, value)}
                       >
                         <SelectTrigger className="border-gray-700 bg-[#2a2a2a] text-white focus:border-[#1DB954] focus:ring-[#1DB954]/20">
-                          <SelectValue placeholder="Select mode" />
+                          <SelectValue placeholder="Select from your library" />
                         </SelectTrigger>
-                        <SelectContent className="border-gray-700 bg-[#2a2a2a] text-white [&_[data-highlighted]]:bg-[#3a3a3a] [&_[data-highlighted]]:text-white">
-                          <SelectItem value="public">Public (link)</SelectItem>
-                          <SelectItem value="private">Private (library)</SelectItem>
+                        <SelectContent 
+                          side="bottom" 
+                          className="max-h-48 overflow-y-auto border-gray-700 bg-[#2a2a2a] text-white [&_[data-highlighted]]:bg-[#3a3a3a] [&_[data-highlighted]]:text-white"
+                        >
+                          <SelectItem value="placeholder" disabled>Select from your library</SelectItem>
+                          {privatePlaylists.map((p) => (
+                            <SelectItem key={p.id} value={p.id}>
+                              {p.name}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
-
-                      {selectionMode[1] === 'public' ? (
-                        <div className="relative">
-                          <Link2 className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-                          <Input
-                            placeholder="Enter a playlist link!"
-                            value={playlistInputs[1]}
-                            onChange ={e => handleChange(1, e.target.value)}
-                            className="border-gray-700 bg-[#2a2a2a] pl-10 text-white placeholder:text-gray-500 focus:border-[#1DB954] focus:ring-[#1DB954]/20"
-                          />
-                        </div>
-                      ) : (
-                        <Select
-                          value={playlistInputs[1]}
-                          onValueChange={(value) => handleChange(1, value)}
-                        >
-                          <SelectTrigger className="border-gray-700 bg-[#2a2a2a] text-white focus:border-[#1DB954] focus:ring-[#1DB954]/20">
-                            <SelectValue placeholder="Select from your library" />
-                          </SelectTrigger>
-                          <SelectContent 
-                            side="bottom" 
-                            className="max-h-48 overflow-y-auto border-gray-700 bg-[#2a2a2a] text-white [&_[data-highlighted]]:bg-[#3a3a3a] [&_[data-highlighted]]:text-white"
-                          >
-                            <SelectItem value="placeholder" disabled>Select from your library</SelectItem>
-                            {privatePlaylists.map((p) => (
-                              <SelectItem key={p.id} value={p.id}>
-                                {p.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      )}
-                    </div>
+                    )}
                   </div>
+                  {/* Big Cover Image */}
+                  {playlistImages[1] && (
+                    <img
+                      src={playlistImages[1]}
+                      alt="Playlist 2 Cover"
+                      className="h-48 w-48 rounded shadow-lg object-cover ml-auto"
+                    />
+                  )}
                 </div>
               </div>
               {/* Compare Button
