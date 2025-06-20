@@ -190,7 +190,7 @@ export default function PlaylistSelector({ accessToken, onPlaylistsCompared }: P
                           <SelectValue placeholder="Select from your library" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="placeholder">Select from your library</SelectItem>
+                          <SelectItem value="placeholder" disabled>Select from your library</SelectItem>
                           {privatePlaylists.map((p) => (
                             <SelectItem key={p.id} value={p.id}>
                               {p.name}
